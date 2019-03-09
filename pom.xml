@@ -45,17 +45,6 @@
 			<version>1.16.10</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>net.spy</groupId>
-			<artifactId>spymemcached</artifactId>
-			<version>2.12.3</version>
-		</dependency>
-		<dependency>
-			<groupId>com.btmatthews.springboot</groupId>
-			<artifactId>memcached-spring-boot-starter</artifactId>
-			<version>1.1.0</version>
-		</dependency>
-
 	</dependencies>
 
 	<build>

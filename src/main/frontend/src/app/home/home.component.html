@@ -1,0 +1,7 @@
+<form (ngSubmit)="createGame()">
+    Provide your name: <input [(ngModel)]="username" name="username">
+    Provide game name: <input [(ngModel)]="roomName" name="roomName">
+    <button>Create game</button>
+</form>
+OR provide a game id to connecto to:
+<input [(ngModel)]="gameId" name="gameId"> <button (click)="connect()">Connect</button>

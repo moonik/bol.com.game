@@ -1,16 +1,21 @@
 package com.roman.mysan.bol.com.game.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter @Setter
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class Game {
 
     private Player firstPlayer;
     private Player secondPlayer;
-    private String gameToken;
+    private GameStatus status;
+    private String gameId;
+
+    public enum GameStatus {
+        READY,
+        WAITING,
+        FINISHED
+    }
 }
