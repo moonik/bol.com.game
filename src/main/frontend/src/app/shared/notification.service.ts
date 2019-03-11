@@ -63,7 +63,7 @@ export class WebSocketService {
         this.stompClient.send(url, {}, JSON.stringify(data));
     }
 
-    subscribeOnNotifications(): Observable<any> {
+    asObservable(): Observable<any> {
         return this.subject.asObservable();
     }
 }

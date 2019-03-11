@@ -3,6 +3,7 @@ package com.roman.mysan.bol.com.game.service;
 import com.roman.mysan.bol.com.game.domain.Connection;
 import com.roman.mysan.bol.com.game.domain.Game;
 import com.roman.mysan.bol.com.game.domain.Game.GameStatus;
+import com.roman.mysan.bol.com.game.domain.Game.PlayerTurn;
 import com.roman.mysan.bol.com.game.domain.Player;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @AllArgsConstructor
@@ -21,18 +23,19 @@ public class GameService {
 
     public Game createNewGame(String gameName) {
         String gameId = createGameId(gameName);
-        Game game = Game.builder()
-                    .status(GameStatus.WAITING)
-                    .gameId(gameId)
-                    .build();
+        Game game = Game.builder().status(GameStatus.WAITING).gameId(gameId).build();
         games.put(gameId, game);
         return game;
     }
 
     public void connectTo(Connection connection) {
         Game game = addPlayer(connection.getGameId(), connection.getUsername());
+        sendMessage(game);
+    }
+
+    public void sendMessage(Game game) {
         simpMessagingTemplate.convertAndSendToUser(
-                connection.getGameId(),
+                game.getGameId(),
                 "/queue/notification",
                 game
         );
@@ -46,6 +49,8 @@ public class GameService {
         } else {
             game.setSecondPlayer(player);
             game.setStatus(GameStatus.READY);
+            int playerTurn = ThreadLocalRandom.current().nextInt(1, 3);
+            game.setPlayerTurn(playerTurn == 1 ? PlayerTurn.FIRST : PlayerTurn.SECOND);
         }
         games.put(gameId, game);
         return game;

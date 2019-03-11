@@ -3,5 +3,28 @@
 </div>
 
 <div *ngIf="isGameReady()">
-    Let's play.
+    <div>
+        Player 1
+        <div>
+            <button
+            [disabled]="!isMyTurn() && !isMyPit('firstPlayer')"
+            *ngFor="let stones of gameData.firstPlayer.pits; index as i"
+            (click)="sowStones(i, 'firstPlayer')"> 
+                {{ stones }}
+            </button>
+            Large pit: {{ gameData.firstPlayer.largePit }}
+        </div>
+        Player 2
+        <div>
+            <button
+            [disabled]="!isMyTurn() && !isMyPit('secondPlayer')"
+            *ngFor="let stones of gameData.secondPlayer.pits; index as i"
+            (click)="sowStones(i, 'secondPlayer')"> 
+                {{ stones }}
+            </button>
+            Large pit: {{ gameData.secondPlayer.largePit }}
+        </div>
+    </div>
+
+    <button>Finish</button>
 </div>

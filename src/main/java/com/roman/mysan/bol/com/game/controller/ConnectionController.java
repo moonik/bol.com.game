@@ -1,6 +1,7 @@
 package com.roman.mysan.bol.com.game.controller;
 
 import com.roman.mysan.bol.com.game.domain.Connection;
+import com.roman.mysan.bol.com.game.domain.Game;
 import com.roman.mysan.bol.com.game.service.GameService;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -17,5 +18,10 @@ public class ConnectionController {
     @MessageMapping("/connect-to")
     public void connectTo(Connection connection) {
         gameService.connectTo(connection);
+    }
+
+    @MessageMapping("/make-turn")
+    public void makeTurn(Game game) {
+        gameService.sendMessage(game);
     }
 }
