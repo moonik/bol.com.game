@@ -32,7 +32,7 @@ public class GameServiceTest {
 	public void setup() {
 		initMocks(this);
 		games = new HashMap<>();
-		games.put("gameId", Game.builder().status(GameStatus.WAITING).gameId(GAME_ID).build());
+		games.put(GAME_ID, Game.builder().status(GameStatus.WAITING).gameId(GAME_ID).build());
 		gameService = new GameService(games, simpMessagingTemplate);
 	}
 

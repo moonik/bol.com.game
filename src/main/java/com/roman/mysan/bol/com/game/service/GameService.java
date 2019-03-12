@@ -5,7 +5,6 @@ import com.roman.mysan.bol.com.game.domain.Game;
 import com.roman.mysan.bol.com.game.domain.Game.GameStatus;
 import com.roman.mysan.bol.com.game.domain.Game.PlayerTurn;
 import com.roman.mysan.bol.com.game.domain.Player;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;

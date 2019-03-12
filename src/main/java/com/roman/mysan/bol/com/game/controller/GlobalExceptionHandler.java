@@ -12,7 +12,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoSuchElementException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleBadCredentailsException(Exception ex) {
+    public String handleNoSuchElementException(Exception ex) {
         return ex.getMessage();
     }
 }

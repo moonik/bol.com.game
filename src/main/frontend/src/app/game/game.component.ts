@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { WebSocketService } from '../shared/notification.service';
 import { Game } from '../dto/game';
 import { Player } from '../dto/player';
+import gameStatuses from '../constants/game-statuses';
 
 @Component({
   selector: 'app-game',
@@ -15,33 +16,41 @@ export class GameComponent implements OnInit {
     gameId: string;
     gameData: Game = new Game();
     role;
+    username;
+    readonly MESSAGE_URL = '/app/make-turn';
 
     constructor(private activeRoute: ActivatedRoute, private wsService: WebSocketService, private router: Router) {
     }
 
     ngOnInit() {
+        this.username = localStorage.getItem('username');
         this.activeRoute.params.subscribe((params: Params) => {
             this.gameId = params['id'];
             this.role = params['role'];
             this.wsService.initWebSocketConnection();
-            this.wsService.asObservable().subscribe(data => this.gameData = data);
+            this.wsService.asObservable().subscribe(data => {
+                this.gameData = data;
+                if (this.gameData.status === gameStatuses.FINISHED) {
+                    this.leave();
+                }
+            });
         });
     }
 
     isMyTurn() {
         if (this.gameData.playerTurn === 'FIRST') {
-            return localStorage.getItem('username') === this.gameData.firstPlayer.username;
+            return this.username === this.gameData.firstPlayer.username;
         } else {
-            return localStorage.getItem('username') === this.gameData.secondPlayer.username;
+            return this.username === this.gameData.secondPlayer.username;
         }
     }
 
     isGameStarted() {
-        return this.gameData.status === 'STARTED';
+        return this.gameData.status === gameStatuses.STARTED;
     }
 
     isGameReady() {
-        return this.gameData.status === 'READY';
+        return this.gameData.status === gameStatuses.READY;
     }
 
     private getOponent(player) {
@@ -81,8 +90,9 @@ export class GameComponent implements OnInit {
 
     checkIsGameFinished() {
         if (this.isGameFinished()) {
-            this.wsService.disconnect();
-            this.router.navigate(['/home']);
+            this.gameData.status = gameStatuses.FINISHED;
+            this.wsService.sendNotification(this.MESSAGE_URL, this.gameData);
+            this.leave();
         }
     }
 
@@ -107,15 +117,20 @@ export class GameComponent implements OnInit {
     }
 
     finishTurn() {
-        this.wsService.sendNotification('/app/make-turn', this.gameData);
+        this.wsService.sendNotification(this.MESSAGE_URL, this.gameData);
     }
 
     startGame() {
-        this.gameData.status = 'STARTED';
-        this.wsService.sendNotification('/app/make-turn', this.gameData);
+        this.gameData.status = gameStatuses.STARTED;
+        this.wsService.sendNotification(this.MESSAGE_URL, this.gameData);
     }
 
     isDisabled(role, pit, player) {
         return !this.isMyTurn() || this.role !== role || this.gameData[player].pits[pit] === 0;
+    }
+
+    leave() {
+        this.wsService.disconnect();
+        this.router.navigate(['/home']);
     }
  }
