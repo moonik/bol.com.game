@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { WebSocketService } from '../shared/notification.service';
 import { Game } from '../dto/game';
 import { Player } from '../dto/player';
-import gameStatuses from '../constants/game-statuses';
+import gameStatus from '../constants/game-status';
 
 @Component({
   selector: 'app-game',
@@ -30,7 +30,7 @@ export class GameComponent implements OnInit {
             this.wsService.initWebSocketConnection();
             this.wsService.asObservable().subscribe(data => {
                 this.gameData = data;
-                if (this.gameData.status === gameStatuses.FINISHED) {
+                if (this.gameData.status === gameStatus.FINISHED) {
                     this.leave();
                 }
             });
@@ -46,11 +46,11 @@ export class GameComponent implements OnInit {
     }
 
     isGameStarted() {
-        return this.gameData.status === gameStatuses.STARTED;
+        return this.gameData.status === gameStatus.STARTED;
     }
 
     isGameReady() {
-        return this.gameData.status === gameStatuses.READY;
+        return this.gameData.status === gameStatus.READY;
     }
 
     private getOponent(player) {
@@ -90,7 +90,7 @@ export class GameComponent implements OnInit {
 
     checkIsGameFinished() {
         if (this.isGameFinished()) {
-            this.gameData.status = gameStatuses.FINISHED;
+            this.gameData.status = gameStatus.FINISHED;
             this.wsService.sendNotification(this.MESSAGE_URL, this.gameData);
             this.leave();
         }
@@ -121,7 +121,7 @@ export class GameComponent implements OnInit {
     }
 
     startGame() {
-        this.gameData.status = gameStatuses.STARTED;
+        this.gameData.status = gameStatus.STARTED;
         this.wsService.sendNotification(this.MESSAGE_URL, this.gameData);
     }
 
