@@ -15,7 +15,7 @@ export class GameComponent implements OnInit {
     gameData: Game = new Game();
     role;
 
-    constructor(private activeRoute: ActivatedRoute, private wsService: WebSocketService) {
+    constructor(private activeRoute: ActivatedRoute, private wsService: WebSocketService, private router: Router) {
     }
 
     ngOnInit() {
@@ -45,22 +45,64 @@ export class GameComponent implements OnInit {
         return this.gameData.status === 'READY';
     }
 
+    private getOponent(player) {
+        if (player === 'firstPlayer') {
+            return 'secondPlayer';
+        } else
+            return 'firstPlayer';
+    }
+
     sowStones(index, player) {
         let stones = this.gameData[player].pits[index];
         this.gameData[player].pits[index] = 0;
         for (index++; index < 6 && stones > 0; index++) {
+            if (stones === 1 && this.gameData[player].pits[index] === 0) {
+                this.gameData[player].pits[index] += this.gameData[this.getOponent(player)].pits[index];
+                this.gameData[this.getOponent(player)].pits[index] = 0;
+            }
             this.gameData[player].pits[index]++;
             stones--;
         }
 
-        let isFinished = stones == 1 ? false : true;
+        let isFinishedTurn = stones === 1 ? false : true;
         if (stones > 0) {
-            this.gameData[player].largePit = stones;
+            this.gameData[player].largePit += stones;
         }
-        if (isFinished) {
+
+        this.checkIfTurnFinished(isFinishedTurn);
+        this.checkIsGameFinished();
+    }
+
+    checkIfTurnFinished(isFinishedTurn) {
+        if (isFinishedTurn) {
             this.finishTurn();
             this.gameData.playerTurn = this.gameData.playerTurn === 'FIRST' ? 'SECOND' : 'FIRST';
         }
+    }
+
+    checkIsGameFinished() {
+        if (this.isGameFinished()) {
+            this.wsService.disconnect();
+            this.router.navigate(['/home']);
+        }
+    }
+
+    private isGameFinished() {
+        const firstPlayerEmptyPits = this.gameData.firstPlayer.pits.filter(stones => stones === 0);
+        const secondPlayerEmptyPits = this.gameData.secondPlayer.pits.filter(stones => stones === 0);
+        if (firstPlayerEmptyPits.length === 6) {
+            this.gameData.secondPlayer.pits.forEach(stones => this.gameData.secondPlayer.largePit += stones);
+        } else if (secondPlayerEmptyPits.length === 6) {
+            this.gameData.secondPlayer.pits.forEach(stones => this.gameData.secondPlayer.largePit += stones);
+        } else
+            return false;
+        alert('Game is over. Winner: ' + this.getWinner());
+        return true;
+    }
+
+    private getWinner() {
+        return  this.gameData.firstPlayer.largePit > this.gameData.secondPlayer.largePit ?
+                this.gameData.firstPlayer.username : this.gameData.secondPlayer.username;
     }
 
     finishTurn() {
@@ -70,5 +112,9 @@ export class GameComponent implements OnInit {
     startGame() {
         this.gameData.status = 'STARTED';
         this.wsService.sendNotification('/app/make-turn', this.gameData);
+    }
+
+    isDisabled(role, pit, player) {
+        return !this.isMyTurn() || this.role !== role || this.gameData[player].pits[pit] === 0;
     }
  }

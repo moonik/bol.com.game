@@ -1,7 +1,9 @@
 <div *ngIf="!isGameReady() && !isGameStarted()">
     Waiting for other player...
 </div>
-
+<div *ngIf="isGameReady() && role !== 'creator'">
+    Waiting for creator to start the game...
+</div>
 <button *ngIf="isGameReady() && role === 'creator'" (click)="startGame()">Start game</button>
 
 <div *ngIf="isGameStarted() && gameData">
@@ -9,7 +11,7 @@
         Player 1
         <div>
             <button
-            [disabled]="!isMyTurn() || role !== 'creator'"
+            [disabled]="isDisabled('creator', i, 'firstPlayer')"
             *ngFor="let stones of gameData.firstPlayer.pits; index as i"
             (click)="sowStones(i, 'firstPlayer')"> 
                 {{ stones }}
@@ -19,7 +21,7 @@
         Player 2
         <div>
             <button
-            [disabled]="!isMyTurn() || role !== 'player'"
+            [disabled]="isDisabled('player', i, 'secondPlayer')"
             *ngFor="let stones of gameData.secondPlayer.pits; index as i"
             (click)="sowStones(i, 'secondPlayer')"> 
                 {{ stones }}
