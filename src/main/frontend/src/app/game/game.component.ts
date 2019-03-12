@@ -3,6 +3,7 @@ import {Router, ActivatedRoute, Params} from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { WebSocketService } from '../shared/notification.service';
 import { Game } from '../dto/game';
+import { Player } from '../dto/player';
 
 @Component({
   selector: 'app-game',
@@ -23,9 +24,7 @@ export class GameComponent implements OnInit {
             this.gameId = params['id'];
             this.role = params['role'];
             this.wsService.initWebSocketConnection();
-            this.wsService.asObservable().subscribe(data => {
-                this.gameData = data;
-            });
+            this.wsService.asObservable().subscribe(data => this.gameData = data);
         });
     }
 
@@ -91,9 +90,11 @@ export class GameComponent implements OnInit {
         const firstPlayerEmptyPits = this.gameData.firstPlayer.pits.filter(stones => stones === 0);
         const secondPlayerEmptyPits = this.gameData.secondPlayer.pits.filter(stones => stones === 0);
         if (firstPlayerEmptyPits.length === 6) {
-            this.gameData.secondPlayer.pits.forEach(stones => this.gameData.secondPlayer.largePit += stones);
+            const sum = this.gameData.secondPlayer.pits.reduce((sum, a) => sum + a);
+            this.gameData.secondPlayer.largePit += sum;
         } else if (secondPlayerEmptyPits.length === 6) {
-            this.gameData.secondPlayer.pits.forEach(stones => this.gameData.secondPlayer.largePit += stones);
+            const sum = this.gameData.firstPlayer.pits.reduce((sum, a) => sum + a);
+            this.gameData.firstPlayer.largePit += sum;
         } else
             return false;
         alert('Game is over. Winner: ' + this.getWinner());
@@ -102,7 +103,7 @@ export class GameComponent implements OnInit {
 
     private getWinner() {
         return  this.gameData.firstPlayer.largePit > this.gameData.secondPlayer.largePit ?
-                this.gameData.firstPlayer.username : this.gameData.secondPlayer.username;
+            this.gameData.firstPlayer.username : this.gameData.secondPlayer.username;
     }
 
     finishTurn() {
