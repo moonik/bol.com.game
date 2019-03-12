@@ -2,6 +2,8 @@ package com.roman.mysan.bol.com.game.domain;
 
 import lombok.*;
 
+import java.util.Objects;
+
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,5 +26,21 @@ public class Game {
         WAITING,
         FINISHED,
         STARTED
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Game game = (Game) o;
+        return firstPlayer.equals(game.firstPlayer) &&
+                secondPlayer.equals(game.secondPlayer) &&
+                status == game.status &&
+                gameId.equals(game.gameId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstPlayer, secondPlayer, status, gameId);
     }
 }

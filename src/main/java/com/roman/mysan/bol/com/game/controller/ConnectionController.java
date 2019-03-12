@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.roman.mysan.bol.com.game.ApplicationConstants.API_URL;
+import static com.roman.mysan.bol.com.game.utils.ApplicationConstants.API_URL;
 
 @RestController(API_URL)
 @AllArgsConstructor

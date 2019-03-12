@@ -6,7 +6,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
-import static com.roman.mysan.bol.com.game.ApplicationConstants.API_URL;
+import static com.roman.mysan.bol.com.game.utils.ApplicationConstants.API_URL;
 
 @Configuration
 @EnableWebSocketMessageBroker

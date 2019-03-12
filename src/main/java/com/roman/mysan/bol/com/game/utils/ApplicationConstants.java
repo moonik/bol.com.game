@@ -1,4 +1,4 @@
-package com.roman.mysan.bol.com.game;
+package com.roman.mysan.bol.com.game.utils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

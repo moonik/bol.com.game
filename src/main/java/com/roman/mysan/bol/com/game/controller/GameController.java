@@ -5,7 +5,7 @@ import com.roman.mysan.bol.com.game.service.GameService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import static com.roman.mysan.bol.com.game.ApplicationConstants.API_URL;
+import static com.roman.mysan.bol.com.game.utils.ApplicationConstants.API_URL;
 
 @RestController
 @RequestMapping(API_URL + "/game")
